@@ -38,7 +38,6 @@ ipy generate_latex_appendix.py -- \
   --language_status english_only \
   --english_only_promptsource_dir promptsource_tr13 \
   --story_cloze_dir $PATH_TO_STORY_CLOZE_DIR \
-  --filter_str xstory \
   --exclude_t0_datasets 1 \
   --refresh
 
@@ -47,6 +46,5 @@ ipy generate_latex_appendix.py -- \
   --language_status multilingual \
   --english_only_promptsource_dir promptsource_xp3mt \
   --exclude_t0_datasets 1 \
-  --limit 3 \
   --refresh
 ```
