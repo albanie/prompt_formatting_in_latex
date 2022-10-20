@@ -1,0 +1,89 @@
+dataset,subset,template,uuid,reference,\cite ref
+anli,,GPT-3 style,620aa3fc-d5eb-46f5-a1ee-4c754527aa97,"Same as reported in Figure G7 of the GPT-3 paper, except that there is no task identifying tokens like ""anli R1: "".",gpt3
+anli,,based on the previous passage,9b613182-c6ab-4427-9221-3d68f6d62765,Adapted from the BoolQ prompts in Schick & Schütze 2021.,schick-schutze-2021-just
+anli,,should assume,179eb863-3ece-4e6f-af0f-fcb46d997306,Webson & Pavlick 2021,webson-pavlick-2021
+anli,,justified in saying,a850110d-f1a3-49b4-949a-d3bfe9f81344,Webson & Pavlick 2021,webson-pavlick-2021
+anli,,can we infer,c4ed37ae-d7d7-4197-a725-ef2152fa3b1f,Webson & Pavlick 2021,webson-pavlick-2021
+anli,,guaranteed true,ffa0a6f0-7186-4ccb-bb35-8b1affb747a0,Webson & Pavlick 2021,webson-pavlick-2021
+anli,,MNLI crowdsource,0cc3ae39-3997-4686-8c93-5d51457efa1f,Adapted from Williams et al. 2018's instructions to crowdsourcing workers.,N18-1101
+anli,,take the following as truth,bab86d5a-4f9c-40db-b619-a7b7d5cae681,Bers et al.,webson-pavlick-2021
+anli,,guaranteed/possible/impossible,ca24b93a-6265-462f-b140-e329c03d94fa,Bers et al.,webson-pavlick-2021
+anli,,always/sometimes/never,dbc68425-5c42-43ae-9748-70ce8c5a167e,Bers et al.,webson-pavlick-2021
+anli,,consider always/sometimes/never,e6f32b9c-7e0b-474a-a0d2-e84d20c22aba,Bers et al.,webson-pavlick-2021
+anli,,claim true/false/inconclusive,ec249357-e672-4e7d-b8b6-d97ed7d090c5,Bers et al.,webson-pavlick-2021
+boolq,,Boolq GPT3,c746b16d-212d-4f1f-9988-9fee99584f25,Take from GPT3 - Figure G29,gpt3
+drop,,DROP GPT3,ab58cc42-a558-4709-8a73-30194fcf9fa2,Prompt format from GPT3 - Table G20,gpt3
+gigaword,,TLDR,90c34acf-2f42-4e66-98dc-7453f7e60e60,GPT-2 TLDR,radford2019language
+hans,,GPT-3 style,e86994a7-2649-4535-acce-57e5aed8d390,Same as reported in Figure G31 of the GPT-3 paper.,gpt3
+hans,,based on the previous passage,559dec8c-5ecc-4ff6-9765-7358e5b675d3,Adapted from the BoolQ prompts in Schick & Schütze 2021.,schick-schutze-2021-just
+hans,,should assume,2084c370-6052-4840-89b6-b35ad70fdf31,Webson & Pavlick 2021,webson-pavlick-2021
+hans,,guaranteed true,6ed3823e-5ebb-4398-8366-273047d970f0,Webson & Pavlick 2021,webson-pavlick-2021
+hans,,justified in saying,d6fad9e1-d882-4d06-8f7f-ce400268df5f,Webson & Pavlick 2021,webson-pavlick-2021
+hans,,can we infer,ffbc8068-e791-4277-b342-1d7e0e80f825,Webson & Pavlick 2021,webson-pavlick-2021
+hans,,MNLI crowdsource,c5508a95-1f23-47b9-aed4-0eca8380f71b,Adapted from Williams et al. 2018's instructions to crowdsourcing workers.,N18-1101
+multi_nli,,GPT-3 style,6c6d824a-89c8-48cc-a4b5-cab04d649117,"Same as reported in Figure G7 of the GPT-3 paper, except that there is no task identifying tokens like ""anli R1: "".",gpt3
+multi_nli,,based on the previous passage,f1a17d8b-78fb-4300-bc13-8c4572a091fa,Adapted from the BoolQ prompts in Schick & Schütze 2021.,schick-schutze-2021-just
+paws,labeled_swap,PAWS-ANLI GPT3,d9911dad-75fe-4506-9843-3a46ba5e49aa,ANLI prompt format from Table G7 in the GPT3 paper,gpt3
+paws,labeled_swap,PAWS-ANLI GPT3-no-label,f0866713-c59a-4c5d-a307-95e80a935faa,ANLI prompt format from Table G7 in the GPT3 paper. Additionally added task information without any label.,gpt3
+paws,labeled_final,PAWS-ANLI GPT3,d9911dad-75fe-4506-9843-3a46ba5e49be,ANLI prompt format from Table G7 in the GPT3 paper,gpt3
+paws,labeled_final,PAWS-ANLI GPT3-no-label,f0866713-c59a-4c5d-a307-95e80a935f99,ANLI prompt format from Table G7 in the GPT3 paper. Additionally added task information without any label.,gpt3
+paws,unlabeled_final,PAWS-ANLI GPT3,d9911dad-75fe-4506-9843-3a46ba5e49bb,ANLI prompt format from Table G7 in the GPT3 paper,gpt3
+paws,unlabeled_final,PAWS-ANLI GPT3-no-label,f0866713-c59a-4c5d-a307-95e80a935fbb,ANLI prompt format from Table G7 in the GPT3 paper. Additionally added task information without any label.,gpt3
+paws-x,en,PAWS-ANLI GPT3,d9911dad-75fe-4506-9843-3a46ba5e49dd,ANLI prompt format from Table G7 in the GPT3 paper,gpt3
+paws-x,en,PAWS-ANLI GPT3-no-label,f0866713-c59a-4c5d-a307-95e80a935fdd,ANLI prompt format from Table G7 in the GPT3 paper. Additionally added task information without any label.,gpt3
+snli,,GPT-3 style,4b15006d-48de-49e9-970c-6c4206fd4216,"Same as reported in Figure G7 of the GPT-3 paper, except that there is no task identifying tokens like ""anli R1: "".",gpt3
+super_glue,wic,GPT-3-prompt,c3a0a5d8-cfe9-4a7f-8a3c-3c526e0ad0c6,Following table G32. https://arxiv.org/pdf/2005.14165.pdf,gpt3
+super_glue,wic,GPT-3-prompt-with-label,d9e1db2a-ab0b-4621-bb41-01d5788d3873,Following table G32. https://arxiv.org/pdf/2005.14165.pdf add additional label,gpt3
+super_glue,axg,GPT-3 style,626823f5-ff12-46d5-9e68-b2dc4bfe7cd4,Same as reported in Figure G31 of the GPT-3 paper.,gpt3
+super_glue,wsc.fixed,GPT-3 Style,7d377293-d043-4b6c-8ec1-d61eaf14ec67,"Adapted from Figure G33, p. 59, Brown et al. 2020",gpt3
+super_glue,cb,GPT-3 style,75db2bc2-3caa-4956-9653-13c7dd6255df,"Same as reported in Figure G7 of the GPT-3 paper, except that there is no task identifying tokens like ""anli R1: "".",gpt3
+super_glue,axb,GPT-3 style,d965164b-fa96-41b5-8852-e0f6dfe5524e,Same as reported in Figure G31 of the GPT-3 paper.,gpt3
+super_glue,rte,GPT-3 style,8fb1c6aa-20e9-438c-bece-c6af1c746449,Same as reported in Figure G31 of the GPT-3 paper.,gpt3
+super_glue,boolq,GPT-3 Style,492f0f88-4370-46cd-839b-1de37a55aeda,"Same as Figure G29, p. 58 of the GPT-3 paper",gpt3
+super_glue,axg,based on the previous passage,3b7a57e0-7733-4b21-9bed-a381fdc2415f,Adapted from the BoolQ prompts in Schick & Schütze 2021.,schick-schutze-2021-just
+super_glue,wsc.fixed,does the pronoun refer to,212fb8b1-8436-4f64-8f37-a9094fe029f4,Adapted from Perez et al. 2021 and Schick & Schütz 2021.,schick-schutze-2021-just
+super_glue,wsc.fixed,the pronoun refers to,aae24b54-c3a7-4f69-8b77-f6dc115988f8,Adapted from Perez et al. 2021 and Schick & Schütz 2021.,schick-schutze-2021-just
+super_glue,cb,based on the previous passage,358860fd-61ad-45fd-92a6-a72ca9107ebc,Adapted from the BoolQ prompts in Schick & Schütze 2021.,schick-schutze-2021-just
+super_glue,axb,based on the previous passage,d57550ef-2f67-46eb-98cb-432dd135be16,Adapted from the BoolQ prompts in Schick & Schütze 2021.,schick-schutze-2021-just
+super_glue,rte,based on the previous passage,ed1f4b75-8826-4852-9bd6-aedf368678f5,Adapted from the BoolQ prompts in Schick & Schütze 2021.,schick-schutze-2021-just
+super_glue,boolq,based on the following passage,9a1bf459-8047-437c-9def-f21e960429cc,Adapted from Perez et al. 2021 and Schick & Schütz 2021.,schick-schutze-2021-just
+super_glue,boolq,based on the previous passage,b2b3cb60-d6e3-491c-a09a-8201e13e417e,Adapted from Perez et al. 2021 and Schick & Schütz 2021.,schick-schutze-2021-just
+super_glue,multirc,is… a correct answer?,42d47df9-09de-4691-8e49-7cfadd636cdd,Adapted from Perez et al. 2021 and Schick & Schütz 2021.,schick-schutze-2021-just
+super_glue,multirc,paragraph… question… is it… ?,59a2d847-27f3-4002-a125-cf9a291b3098,Adapted from Perez et al. 2021 and Schick & Schütz 2021.,schick-schutze-2021-just
+super_glue,multirc,is the correct answer…,7d878b89-2774-429a-82fb-ac801379e3ae,Adapted from Perez et al. 2021 and Schick & Schütz 2021.,schick-schutze-2021-just
+super_glue,copa,"C1 or C2? premise, so/because…",744047dc-1298-45a2-8d68-d67e3f834ded,Adapted from Perez et al. 2021 and Schick & Schütz 2021.,schick-schutze-2021-just
+super_glue,axg,should assume,0f530aa8-b254-4687-8032-bab1a65610c0,Webson & Pavlick 2021,webson-pavlick-2021
+super_glue,axg,guaranteed true,7e1439f6-d54d-43e6-bdc7-306ad5fd9203,Webson & Pavlick 2021,webson-pavlick-2021
+super_glue,axg,justified in saying,d4a1dd92-e184-4843-bc1f-1f625c833249,Webson & Pavlick 2021,webson-pavlick-2021
+super_glue,axg,can we infer,db13469f-7161-4670-8a59-8c1137d1fa8b,Webson & Pavlick 2021,webson-pavlick-2021
+super_glue,cb,can we infer,2e76cd0f-68ca-4f03-83ed-11cf15b25a84,Webson & Pavlick 2021,webson-pavlick-2021
+super_glue,cb,justified in saying,5c9b1fa9-93f0-4f82-b9e3-e0967e4d7260,Webson & Pavlick 2021,webson-pavlick-2021
+super_glue,cb,guaranteed true,8798b8a4-1f59-4c72-9c1b-3e3044a7462a,Webson & Pavlick 2021,webson-pavlick-2021
+super_glue,cb,should assume,e503b148-8e6c-43b5-9ed6-312794c54d9b,Webson & Pavlick 2021,webson-pavlick-2021
+super_glue,axb,should assume,1ae41916-7b4d-4ef3-b414-bfadd95d67e2,Webson & Pavlick 2021,webson-pavlick-2021
+super_glue,axb,justified in saying,1b2d6e85-a5a9-4d1b-9e3b-630b490c6a34,Webson & Pavlick 2021,webson-pavlick-2021
+super_glue,axb,guaranteed true,908be561-caf4-4416-9fe9-9919c3998681,Webson & Pavlick 2021,webson-pavlick-2021
+super_glue,axb,can we infer,bae54ef5-c3be-4862-bdd4-a559ed04eb31,Webson & Pavlick 2021,webson-pavlick-2021
+super_glue,rte,guaranteed true,2d0d63da-ffcf-4f6e-941a-b8da922be43e,Webson & Pavlick 2021,webson-pavlick-2021
+super_glue,rte,can we infer,4163e6f1-1a83-4c73-b867-02eb7ac80316,Webson & Pavlick 2021,webson-pavlick-2021
+super_glue,rte,should assume,b8dc85c6-28b6-4340-979a-8e77c2a0dde8,Webson & Pavlick 2021,webson-pavlick-2021
+super_glue,rte,justified in saying,ee0ce095-122a-4509-bf0b-33d1495295f7,Webson & Pavlick 2021,webson-pavlick-2021
+super_glue,wic,similar-sense,f934a96d-fe4d-4075-aa47-5595b9a604c7,"Following https://arxiv.org/abs/2105.11447, https://github.com/ethanjperez/true_few_shot/tree/main/templates.super_glue",DBLP:journals/corr/abs-2105-11447
+super_glue,axg,MNLI crowdsource,e21f5367-0cc8-412d-b8d9-78548438a384,Adapted from Williams et al. 2018's instructions to crowdsourcing workers.,N18-1101
+super_glue,cb,claim true/false/inconclusive,3f43a599-ffdb-490e-8952-c0ce41dd4621,Bers et al.,webson-pavlick-2021
+super_glue,cb,always/sometimes/never,6b0c6191-183d-4731-8050-ab17c909335c,Bers et al.,webson-pavlick-2021
+super_glue,cb,consider always/sometimes/never,87237a07-7cce-470a-80ac-3e5e3a5283ba,Bers et al.,webson-pavlick-2021
+super_glue,cb,guaranteed/possible/impossible,90ab1002-093c-4e54-b48f-626655e36b65,Bers et al.,webson-pavlick-2021
+super_glue,cb,MNLI crowdsource,bee62bfa-5307-4e1c-97b2-2ad2f7bcb179,Adapted from Williams et al. 2018's instructions to crowdsourcing workers.,N18-1101
+super_glue,cb,take the following as truth,ea56b7f3-6e07-45bc-b619-c527eac4a41b,Bers et al.,webson-pavlick-2021
+super_glue,axb,MNLI crowdsource,552d6c20-ab5b-462f-b5fb-3c7b80c78dcc,Adapted from Williams et al. 2018's instructions to crowdsourcing workers.,N18-1101
+super_glue,rte,MNLI crowdsource,2b52a83c-0021-41fe-b44c-5aaa076d71a2,Adapted from Williams et al. 2018's instructions to crowdsourcing workers.,N18-1101
+xnli,en,ANLI GPT3,d9e13133-267e-46c4-afad-c2379dcc5272,ANLI prompt format from Table G7 in the GPT3 paper,gpt3
+xnli,en,Label binarization contraposition,c62a3048-018e-4d93-bc46-645f3f763ee6,Inspired from https://arxiv.org/pdf/1902.01007.pdf Section 4 - Implementation and evaluation,DBLP:journals/corr/abs-1902-01007
+xnli,en,Label binarization,dd4276e6-aebd-44a3-b3cf-baf8a4c237f0,"Grouping ""neutral"" and ""contradiction"" as a single label following https://arxiv.org/pdf/1902.01007.pdf Section 4 - Implementation and evaluation",DBLP:journals/corr/abs-1902-01007
+xsum,,DOC_tldr,d878b768-9da2-4d9d-9517-1edcca3b1b26,GPT-2 TLDR,radford2019language
+xsum,,DOC_how_would_you_rephrase_few_words,3d388a1e-3361-407b-baa7-61397cc58382,http://gptprompts.wikidot.com/prompt:summarization,wikidotgpt
+xsum,,college_roommate_asked_DOC_so_I_recap,4cfe4126-b9f5-44eb-8a98-973987c5f32e,http://gptprompts.wikidot.com/prompt:summarization,wikidotgpt
+xsum,,DOC_boils_down_to_simple_idea_that,57a7a3f1-91f8-4f4b-b72d-745d7cb7b1e3,http://gptprompts.wikidot.com/prompt:summarization,wikidotgpt
+zest,,gpt3instruct_format,7425232a-9880-428c-9ddc-4070e50e22cc,Template format from GPT3 instruct,gpt3
+zest,,gpt3instruct_format_with_domain,bdaf4f8a-2344-4e46-a52b-2045a080a4b2,Template format from GPT3 instruct with the question's domain,gpt3
