@@ -2,6 +2,8 @@
 The datasets were sourced from: https://github.com/bigscience-workshop/bigscience/blob/f0999df3068e48a444adfa02eb41500291af8735/data/xp3/prepare_xp3_train.py
 """
 
+from iso639 import languages
+
 # Define the language codes associated with each dataset
 FLORES_LANGS = [
     ("Acehnese (Arabic script)", "ace_Arab"),
@@ -1511,6 +1513,72 @@ T0_DATASETS = {
     ]
 }
 
+# Copied from metadata
+BLOOM_LANGS = """
+- ak
+- ar
+- as
+- bm
+- bn
+- ca
+- code
+- en
+- es
+- eu
+- fon
+- fr
+- gu
+- hi
+- id
+- ig
+- ki
+- kn
+- lg
+- ln
+- ml
+- mr
+- ne
+- nso
+- ny
+- or
+- pa
+- pt
+- rn
+- rw
+- sn
+- st
+- sw
+- ta
+- te
+- tn
+- ts
+- tum
+- tw
+- ur
+- vi
+- wo
+- xh
+- yo
+- zh
+- zu
+"""
+
+bloom_lang_codes_iso3 = []
+bloom_lang_codes_iso2 = []
+for lang in BLOOM_LANGS.split("\n")[1:-1]:
+    iso2 = lang.replace("- ", "")
+    DS_TO_LANG[iso2] = iso2
+    try:
+        name = languages.get(alpha2=iso2)
+        DS_TO_LANG[name.name.lower()] = iso2
+        # name is e.g. 'swahili (macrolanguage)' also add swahili
+        DS_TO_LANG[name.name.lower().split(" ")[0]] = iso2
+
+        iso3 = name.part3
+        DS_TO_LANG[iso3] = iso2
+    except KeyError:
+        print(f"Could not find iso3 code for {lang}.")
+
 # Add GEM multilingual
 WIKILINGUA_LANGS = ["ar", "en", "es", "fr", "hi", "id", "pt", "vi", "zh"]
 for l1_code in WIKILINGUA_LANGS:
@@ -1527,10 +1595,11 @@ for (l1_name, l1_code) in FLORES_LANGS:
     for (l2_name, l2_code) in FLORES_LANGS:
         l1_code_prefix = l1_code.split("_")[0]
         l2_code_prefix = l2_code.split("_")[0]
-        if l1_code_prefix not in DS_TO_LANG or l2_code_prefix not in DS_TO_LANG:
-            print(f"Skipping as {l1_name} or {l2_name} was not pre-trained on.")
-            continue
-        elif l1_name == l2_name:
+        if (
+            l1_code_prefix not in DS_TO_LANG or  # skip as l1_name was not pre-trained on
+            l2_code_prefix not in DS_TO_LANG or  # skip as l2_name was not pre-trained on
+            l1_name == l2_name  # not a translation task
+        ):
             continue
         dataset_name = ("facebook/flores", f"{l1_code}-{l2_code}")
         TRAIN_DATASETS.append(dataset_name)
@@ -1540,7 +1609,7 @@ for (l1_name, l1_code) in FLORES_LANGS:
 # Add wmt22
 for (l1_code, l2_code) in WMT22_LANGS:
     if l1_code not in DS_TO_LANG or l2_code not in DS_TO_LANG:
-        print(f"Skipping as {l1_code} or {l2_code} was not pre-trained on.")
+        # print(f"Skipping as {l1_code} or {l2_code} was not pre-trained on.")
         continue
     elif l1_code == l2_code:
         continue
