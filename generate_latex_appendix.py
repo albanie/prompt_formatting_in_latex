@@ -15,6 +15,7 @@ from zsvision.zs_utils import BlockTimer
 
 import datasets
 import pandas as pd
+import bibtexparser
 import tqdm
 from beartype import beartype
 
@@ -560,6 +561,7 @@ def generate_latex_and_bib(
         filter_str: str,
         limit: int,
         refresh: bool,
+        dest_nocite_path: Path,
         template_collection,
 ):
     """Generate latex and corresponding bib files that can be used in the paper appendix
@@ -677,6 +679,7 @@ def generate_latex_and_bib(
         task_info=task_info,
         dest_latex_path=dest_latex_path,
         dest_bib_path=dest_bib_path,
+        dest_nocite_path=dest_nocite_path,
         story_cloze_dir=story_cloze_dir,
         cite_dict=cite_dict,
     )
@@ -689,10 +692,12 @@ def write_latex_and_bib_entries_to_disk(
         cite_dict: dict,
         story_cloze_dir: Path,
         dest_latex_path: Path,
+        dest_nocite_path: Path,
         dest_bib_path: Path,
 ):
     # avoid adding duplicate citations to the bib file
     seen_citations = set()
+    all_bib_keys = set()
 
     with open(dest_latex_path, "w") as lf, open(dest_bib_path, "w") as bib_file:
         for task_idx, task in enumerate(types):
@@ -725,7 +730,10 @@ def write_latex_and_bib_entries_to_disk(
                 cit = dataset_data[tr[0]].info.citation
                 # apply any manual citation fixes that are required
                 cit = MANUAL_CITATION_FIXES.get(cit, cit)
-                
+                bib_entry = bibtexparser.loads(cit)
+                bib_keys = [entry["ID"] for entry in bib_entry.entries]
+                all_bib_keys.update(bib_keys)
+
                 if cit and ("{" in cit) and (cit not in seen_citations):
                     print(cit, file=bib_file)
                     x = cit.split("{")[1].split(",")[0]
@@ -822,6 +830,11 @@ def write_latex_and_bib_entries_to_disk(
                         print(r"\vspace*{-0.3cm}", file=lf)
                     print("", file=lf)
 
+    print(f"Printing {len(all_bib_keys)} unique citations to {dest_nocite_path}")
+    with open(dest_nocite_path, "w") as f:
+        for bib_key in sorted(all_bib_keys):
+            print(f"\\nocite{{{bib_key}}}", file=f)
+
 
 @beartype
 def parse_args() -> argparse.Namespace:
@@ -834,6 +847,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--prompt_citation_csv", default="PromptCite.csv", type=Path)
     parser.add_argument("--dest_latex_suffix_path", default="promptgen.tex", type=Path)
     parser.add_argument("--dest_bib_suffix_path", default="promptgen.bib", type=Path)
+    parser.add_argument("--dest_nocite_path", default="prompt_appendix_nocite.tex", type=Path, help="location to store a `nocite` file to synchronise the bibliographies")
     parser.add_argument("--refresh", action="store_true")
     parser.add_argument("--exclude_t0_datasets", type=int, default=1, help="exclude datasets that were used in the T0 paper (and thus already provide prompts in its appendix)")
     parser.add_argument("--redundant_datasets", nargs="+", type=str,
@@ -886,6 +900,7 @@ def main():
         max_reduandant_dataset_count=args.max_reduandant_dataset_count,
         story_cloze_dir=args.story_cloze_dir,
         refresh=args.refresh,
+        dest_nocite_path=args.dest_nocite_path,
     )
 
 

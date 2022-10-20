@@ -20,6 +20,8 @@ pip install -q iso-639
 pip install tqdm
 pip install beartype
 pip install pandas
+pip install bibtexparser
+pip install zsvision
 ```
 
 ## Generate latex appendix
