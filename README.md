@@ -10,6 +10,8 @@ A script to format prompts for insertion into a latex appendix.
 git clone git@github.com:albanie/prompt_formatting_in_latex.git
 cd prompt_formatting_in_latex
 
+# different prompts are stored on different branches of promptsource - we need
+# multiple branches to be accessible for formatting purposes
 git clone git@github.com:Muennighoff/promptsource.git promptsource_tr13
 cd promptsource_tr13 ; git fetch ; git switch tr13 ; cd ..
 git clone git@github.com:Muennighoff/promptsource.git promptsource_xp3mt
