@@ -50,8 +50,9 @@ NON_STREAMABLE_DATASET_PREFIXES = {
     "facebook/flores", # datasets crash on encoding errors when streaming
 }
 
-# We exclude datasets for which source access has not yet been obtained
+# Several datasets are excluded for various reasons
 TEMPORARY_EXCLUSION = {
+    # We exclude datasets for which source access has not yet been obtained
     ('Muennighoff/xstory_cloze', 'ar'),
     ('Muennighoff/xstory_cloze', 'es'),
     ('Muennighoff/xstory_cloze', 'eu'),
@@ -60,7 +61,17 @@ TEMPORARY_EXCLUSION = {
     ('Muennighoff/xstory_cloze', 'te'),
     ('Muennighoff/xstory_cloze', 'sw'),
     ('Muennighoff/xstory_cloze', 'zh'),
+
+    # Removed the following since they are not used in practice
+    ('clue', 'cluewsc2020'),
+    ('hellaswag', None),
+    ('super_glue', 'wsc.fixed'),
+    ("multi_eurlex", "all_languages"),
+
+    # HumanEval did not make use of promptsource, so we remove it
+    ("openai_humaneval", None),
 }
+
 
 # Individual prompts which appear to have issues are excluded here
 EXLCUDE_SPECIFIC_PROMPTS = {
