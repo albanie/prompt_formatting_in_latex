@@ -7,6 +7,7 @@ https://arxiv.org/abs/2110.08207
 
 import argparse
 from pathlib import Path
+import json
 from typing import List, Tuple
 from collections import defaultdict
 import re
@@ -307,6 +308,32 @@ def find_tags(text: str) -> list:
 
 
 @beartype
+def parse_citation_keys(reference: str) -> List[str]:
+    """Parse citation keys from a reference string.
+    
+    Args:
+        reference: the reference string to be parsed
+
+    Returns:
+        A list of citation keys
+        
+    Example input/output:
+    in: 'Adapted from \cite{true-zero-shot} and \cite{DBLP:journals/corr/abs-2001-07676}.'
+    out: ['true-zero-shot', 'DBLP:journals/corr/abs-2001-07676']
+    """
+    # replace all whitespaces with a single space
+    reference = ' '.join(reference.split())
+    # pattern to match the citation keys
+    # the pattern matches \cite{...} and \citep{...}
+    # the key can contain alphanumeric characters and some punctuation,
+    # but not curly brackets
+    citation_pattern = r'\\(?:cite|citep)\{([\w\-\:\.\,\'\/\(\)]+)\}'
+    # run the regex and return the list of citation keys
+    citation_keys = re.findall(citation_pattern, reference)
+    return citation_keys
+
+
+@beartype
 def get_language_tags(dataset: str, key: str, dic: dict = {}) -> tuple:
     """Get polyglossia language tags for the given dataset and key combination.
     These tags are used to wrap the text so that it can be typeset correctly by
@@ -395,7 +422,7 @@ def get_language_tags(dataset: str, key: str, dic: dict = {}) -> tuple:
 @beartype
 def wrap_text_in_lang_tags(text, lang) -> str:
     # fix common formatting issue where newlines are broken
-    text = text.replace(" \ n ", " \n ")
+    text = text.replace(" \ n ", r" \n ")
     tag_positions = find_tags(text)
     start_tag, end_tag = r"\begin{" + lang + "}", r"\end{" + lang + "}"
     combined = ""
@@ -478,6 +505,7 @@ def is_supported_latex_language(dataset_name: tuple) -> bool:
 @beartype
 def parse_tasks_and_type_info(
         dataset_metadata: List[dict],
+        report_translation_types: str,
         template_collection,
 ) -> Tuple[dict, dict]:
     """Parse information about individual prompts from the dataset metadata and group
@@ -486,6 +514,8 @@ def parse_tasks_and_type_info(
     Args:
         dataset_metadata: the metadata associated with the collection of datasets to
             be processed.
+        report_translation_types: track information about translation types for a given
+            sample dataset
         template_collection: an instance of promptsource.tempalates.TemplateCollection
 
     Returns:
@@ -543,14 +573,25 @@ def parse_tasks_and_type_info(
             if use_lang_tags:
                 target = wrap_text_in_lang_tags(target, lang=target_lang)
 
-            types[category][dataset_tag].append({
+            prompt = {
                 "source": {"text": source, "language": source_lang},
                 "target": {"text": target, "language": target_lang},
                 "uuid" : temp2.id,
                 "original" : temp2.metadata.original_task,
+                "prompt_name": temp2.name,
                 "reference": temp2.reference,
                 "choices": temp2.get_answer_choices_expr(),
-            })
+            }
+            if dataset_tag == report_translation_types:
+                # check that the prompt name specifies either machine translation or
+                # human translation
+                suffixes = {"mt": "machine translation", "ht": "human translation"}
+                assert any(prompt["prompt_name"].endswith(suffix) for suffix in suffixes), (
+                    f"Expected {prompt['name']} to end with one of {suffixes}"
+                )
+                prompt["translation_type"] = suffixes[prompt["prompt_name"][-2:]]
+
+            types[category][dataset_tag].append(prompt)
             task_info[dataset_tag] = {"eval" : bool(metadata["do_eval"])}
 
     # Provide a summary of the number of prompts which were skipped (and the reasons)
@@ -568,11 +609,14 @@ def generate_latex_and_bib(
         exclude_t0_datasets: bool,
         redundant_datasets: List[str],
         max_reduandant_dataset_count: int,
+        report_translation_types: str,
+        prompt_reference_map_path: Path,
         story_cloze_dir: Path,
         filter_str: str,
         limit: int,
         refresh: bool,
         dest_nocite_path: Path,
+        dest_promptsource_references_path: Path,
         template_collection,
 ):
     """Generate latex and corresponding bib files that can be used in the paper appendix
@@ -682,6 +726,7 @@ def generate_latex_and_bib(
 
     types, task_info = parse_tasks_and_type_info(
         dataset_metadata=dataset_metadata,
+        report_translation_types=report_translation_types,
         template_collection=template_collection,
     )
 
@@ -692,6 +737,9 @@ def generate_latex_and_bib(
         dest_bib_path=dest_bib_path,
         dest_nocite_path=dest_nocite_path,
         story_cloze_dir=story_cloze_dir,
+        report_translation_types=report_translation_types,
+        dest_promptsource_references_path=dest_promptsource_references_path,
+        prompt_reference_map_path=prompt_reference_map_path,
         cite_dict=cite_dict,
     )
 
@@ -705,10 +753,16 @@ def write_latex_and_bib_entries_to_disk(
         dest_latex_path: Path,
         dest_nocite_path: Path,
         dest_bib_path: Path,
+        dest_promptsource_references_path: Path,
+        prompt_reference_map_path: Path,
+        report_translation_types: str,
 ):
     # avoid adding duplicate citations to the bib file
     seen_citations = set()
     all_bib_keys = set()
+    seen_prompt_references = set()
+    with open(prompt_reference_map_path, "r") as f:
+        canonical_prompt_reference_map = json.load(f)
 
     with open(dest_latex_path, "w") as lf, open(dest_bib_path, "w") as bib_file:
         for task_idx, task in enumerate(types):
@@ -799,44 +853,66 @@ def write_latex_and_bib_entries_to_disk(
 
                 print(r"\paragraph{Prompts}\mbox{}\\", file=lf)
                 print("", file=lf)
+
+                prompts = types[task][dataset]
+
+                if dataset == report_translation_types:
+                    # sort the prompts according to whether they are human translated or
+                    # machine translated
+                    prompts = sorted(prompts, key=lambda x: x["translation_type"])
+                    num_ht_prompts = len([x for x in prompts if
+                                         x["translation_type"] == "human translation"])
                 
-                for t in types[task][dataset]:
-                    if t["uuid"] in cite_dict:
-                        print(r"\noindent{\small Prompt from \cite{%s}}"%(cite_dict[t["uuid"]]), file=lf)
-                    if not t["original"]:
+                for prompt_idx, prompt in enumerate(prompts):
+
+                    if dataset == report_translation_types:
+                        if prompt_idx == 0:
+                            print(r"\subsubsubsection{Human translated prompts}", file=lf)
+                        elif prompt_idx == num_ht_prompts:
+                            print(r"\subsubsubsection{Machine translated prompts}", file=lf)
+
+                    if prompt["uuid"] in cite_dict:
+                        print(r"\noindent{\small Prompt from \cite{%s}}"%(cite_dict[prompt["uuid"]]), file=lf)
+                    if not prompt["original"]:
                         print(r"\noindent{\small \nooriginal}", file=lf)
                         print("", file=lf)
+                    if prompt["reference"]:
+                        # map the reference to the correct citation
+                        prompt_reference = canonical_prompt_reference_map[prompt["reference"]]
+                        citation_keys = parse_citation_keys(prompt_reference)
+                        all_bib_keys.update(citation_keys)
+                        print(r"\noindent{\small \textbf{Notes:} %s}"%prompt_reference.replace("_", "\_"), file=lf)
+                        print("", file=lf)
+                        seen_prompt_references.add(prompt_reference)
                     print(r"\inputtemplate", file=lf)
-                    source_text, source_lang = t["source"]["text"], t["source"]["language"]
 
-                    if source_lang in {"Arabic", "bengali"}:
+                    if prompt["source"]["language"] in {"Arabic", "bengali"}:
                         print(r"\begin{mdframed}[hidealllines=true,backgroundcolor=bga]", file=lf)
-                        print(source_text, file=lf)
+                        print(prompt["source"]["text"], file=lf)
                         print(r"\end{mdframed}", file=lf)
                     else:
                         print(r"\begin{minted}[breaklines, tabsize=2,breaksymbolleft=, fontsize=\small,bgcolor=bga]{django}", file=lf)
-                        print(source_text, file=lf)
+                        print(prompt["source"]["text"], file=lf)
                         print(r"\end{minted}", file=lf)
                         print(r"\vspace*{-0.2cm}", file=lf)
                     print("", file=lf)
 
                     print(r"\targettemplate", file=lf)
-                    target_text, target_lang = t["target"]["text"], t["target"]["language"]
 
-                    if target_lang in {"Arabic", "bengali"}:
+                    if prompt["target"]["language"] in {"Arabic", "bengali"}:
                         print(r"\begin{mdframed}[hidealllines=true,backgroundcolor=bg]", file=lf)
-                        print(target_text, file=lf)
+                        print(prompt["target"]["text"], file=lf)
                         print(r"\end{mdframed}", file=lf)
                     else:
                         print(r"\begin{minted}[breaklines, tabsize=2,breaksymbolleft=, fontsize=\small,bgcolor=bg]{django}", file=lf)
-                        print(target_text, file=lf)
+                        print(prompt["target"]["text"], file=lf)
                         print(r"\end{minted}", file=lf)
 
                     print(r"\textcolor[RGB]{220,220,220}{\rule{\linewidth}{0.2pt}}", file=lf)
-                    if t["choices"]:
+                    if prompt["choices"]:
                         print(r"\choicestemplate", file=lf)
                         print(r"\begin{minted}[breaklines, tabsize=2,breaksymbolleft=, fontsize=\small, bgcolor=bgb]{django}", file=lf)
-                        print(t["choices"], file=lf)
+                        print(prompt["choices"], file=lf)
                         print(r"\end{minted}", file=lf)
                         print(r"\vspace*{-0.3cm}", file=lf)
                     print("", file=lf)
@@ -846,6 +922,10 @@ def write_latex_and_bib_entries_to_disk(
         for bib_key in sorted(all_bib_keys):
             print(f"\\nocite{{{bib_key}}}", file=f)
 
+    print(f"Printing {len(seen_prompt_references)} unique promptsource references to {dest_promptsource_references_path}")
+    with open(dest_promptsource_references_path, "w") as f:
+        for reference in sorted(seen_prompt_references):
+            print(f"{reference}", file=f)
 
 @beartype
 def parse_args() -> argparse.Namespace:
@@ -859,7 +939,9 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--dest_latex_suffix_path", default="promptgen.tex", type=Path)
     parser.add_argument("--dest_bib_suffix_path", default="promptgen.bib", type=Path)
     parser.add_argument("--dest_nocite_path", default="prompt_appendix_nocite.tex", type=Path, help="location to store a `nocite` file to synchronise the bibliographies")
+    parser.add_argument("--dest_promptsource_references_path", default="promptsource_references.tex", type=Path, help="location to store references made by promptsource")
     parser.add_argument("--refresh", action="store_true")
+    parser.add_argument("--prompt_reference_map_path", default="prompt_reference_map.json", type=Path)
     parser.add_argument("--exclude_t0_datasets", type=int, default=1, help="exclude datasets that were used in the T0 paper (and thus already provide prompts in its appendix)")
     parser.add_argument("--redundant_datasets", nargs="+", type=str,
                        default=["GEM/wiki_lingua", "GEM/xlsum", "Helsinki-NLP/tatoeba_mt",
@@ -870,6 +952,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--limit", type=int, default=0, help="use a small subset of datasets for fast debugging")
     parser.add_argument("--filter_str", default="", help="if provided, only included datasets that contain this filter string")
     parser.add_argument("--story_cloze_dir", default=Path("data/story_cloze_dir"), type=Path, help="location of local copy of story_cloze dataset")
+    parser.add_argument("--report_translation_types", default="xnli es", help="provide a breakdown of translation types for this dataset")
     return parser.parse_args()
 
 
@@ -912,6 +995,9 @@ def main():
         story_cloze_dir=args.story_cloze_dir,
         refresh=args.refresh,
         dest_nocite_path=args.dest_nocite_path,
+        report_translation_types=args.report_translation_types,
+        dest_promptsource_references_path=args.dest_promptsource_references_path,
+        prompt_reference_map_path=args.prompt_reference_map_path,
     )
 
 
