@@ -867,13 +867,13 @@ def write_latex_and_bib_entries_to_disk(
 
                     if dataset == report_translation_types:
                         if prompt_idx == 0:
-                            print(r"\subsubsubsection{Human translated prompts}", file=lf)
+                            print(r"\subsubsubsection{Human-translated prompts}", file=lf)
                         elif prompt_idx == num_ht_prompts:
-                            print(r"\subsubsubsection{Machine translated prompts}", file=lf)
+                            print(r"\subsubsubsection{Machine-translated prompts}", file=lf)
 
                     if prompt["uuid"] in cite_dict:
                         print(r"\noindent{\small Prompt from \cite{%s}}"%(cite_dict[prompt["uuid"]]), file=lf)
-                    if not prompt["original"]:
+                    if prompt["original"] is False:
                         print(r"\noindent{\small \nooriginal}", file=lf)
                         print("", file=lf)
                     if prompt["reference"]:
