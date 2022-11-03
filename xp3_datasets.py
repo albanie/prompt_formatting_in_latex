@@ -884,7 +884,7 @@ TASK_HIERARCHY = {
         ('rotten_tomatoes', None),
         ('yelp_review_full', None),
     ],
-    "paraphrase": [
+    "paraphrase identification": [
         ('glue', 'mrpc'),
         ('paws', 'labeled_final'),
         ('paws-x', 'en'),
@@ -1006,7 +1006,7 @@ TASK_HIERARCHY = {
         ("Fraser/python-state-changes", None),
         ("teven/code_docstring_corpus", "top_level"),
     ],
-    "coreference": [
+    "coreference resolution": [
         ('winogrande', 'winogrande_xl'),
         ('Muennighoff/xwinograd', 'en'),
         ('Muennighoff/xwinograd', 'fr'),

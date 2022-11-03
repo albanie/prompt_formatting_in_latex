@@ -269,6 +269,14 @@ SMALL_XQUAD_LANG_MAP = {
     "es": "spanish",
 }
 
+# for certain datasets, we avoid reporting examples from the test split (since they
+# lack labels)
+PARTITION_EXCEPTIONS = {
+    "clue cmrc2018": "train",
+    "clue drcd": "train",
+    "clue c3": "train",
+}
+
 @beartype
 def capitalise_each_word(st: str) -> str:
     """For a given string of words separated by spaces, capitalise the first letter
@@ -792,7 +800,17 @@ def write_latex_and_bib_entries_to_disk(
                 print(r"\subsubsection{%s}"%dataset.replace("_", "\_"), file=lf)
                 tr = list(dataset_data.keys())
 
-                cit = dataset_data[tr[0]].info.citation
+                # For certain datasets, we force the use of a particular partition.
+                # An example is clue cmrc 2018, where the tets partition only has
+                # fake labels (we use the validation partition instead). Unfortunately
+                # we cannot simply use the "train" partition for all training datasets,
+                # since some datasets do not have a train partition.
+                if dataset in PARTITION_EXCEPTIONS:
+                    partition = PARTITION_EXCEPTIONS[dataset]
+                else:
+                    partition = tr[0]
+
+                cit = dataset_data[partition].info.citation
                 # apply any manual citation fixes that are required
                 cit = MANUAL_CITATION_FIXES.get(cit, cit)
                 bib_entry = bibtexparser.loads(cit)
@@ -808,7 +826,7 @@ def write_latex_and_bib_entries_to_disk(
 
                 # Use iterator to load example to be compatible with the streaming interface
                 # Use the second example rather than the first
-                dataset_iterator = iter(dataset_data[tr[0]])
+                dataset_iterator = iter(dataset_data[partition])
                 next(dataset_iterator) # skip the first example for excitement
                 dic = next(dataset_iterator)
 
